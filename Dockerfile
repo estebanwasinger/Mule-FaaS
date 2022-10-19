@@ -1,6 +1,6 @@
 FROM openjdk:11
 
-RUN wget https://github.com/mulesoft-labs/data-weave-cli/releases/download/v1.0.25/dw-1.0.25-Linux
+RUN wget https://github.com/mulesoft-labs/data-weave-cli/releases/download/v1.0.24/dw-1.0.24-Linux
 
 RUN mv dw-1.0.24-Linux dw-1.0.24-Linux.zip
 
