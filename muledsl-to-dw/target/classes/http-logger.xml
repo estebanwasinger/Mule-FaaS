@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="10244ff7-c5a6-4522-957d-e4b2059cb1c8" >
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <flow name="test-projectFlow" doc:id="d2336894-2886-46dc-8fd5-e038d0557443" >
+        <http:listener doc:name="Listener" doc:id="3c16062e-aa9e-46cb-ad1b-ee8754c45681" config-ref="HTTP_Listener_config" path="/test"/>
+        <http:request method="GET" doc:name="Request" doc:id="9098b85c-2f67-4c85-8402-551d2600e6e8" url="https://api.github.com/search/repositories?q=-data-weave-grimoire"/>
+        <logger level="INFO" doc:name="Logger" doc:id="2a3f0a80-b84c-4ac6-af8f-245c84154ddd" message="#[sizeOf(payload.items)]"/>
+        <set-payload value="#[{&#10;	total_count: sizeOf(payload.items.owner.login distinctBy ((item, index) -&gt; item)),&#10;	names: payload.items.owner.login distinctBy ((item, index) -&gt; item)&#10;}]" doc:name="Set Payload" doc:id="ae14dff2-0695-454e-8f67-2974a824c8b9" />
+    </flow>
+    <flow name="test-projectFlow1" doc:id="2c805c59-be9c-40ea-a64d-e25404e8cccc" >
+        <http:listener doc:name="Listener" doc:id="19eceb25-8207-4e7d-b981-2a75c7f25139" config-ref="HTTP_Listener_config" path="/otherEndpoint"/>
+        <logger level="INFO" doc:name="Logger" doc:id="15177c7f-c313-4bb2-b85f-167f49164c29" message="Otro endpoint!"/>
+    </flow>
+</mule>
