@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="10244ff7-c5a6-4522-957d-e4b2059cb1c8" >
-        <http:listener-connection host="0.0.0.0" port="8081" />
+        <http:listener-connection host="0.0.0.0" port="8082" />
     </http:listener-config>
     <flow name="test-projectFlow" doc:id="d2336894-2886-46dc-8fd5-e038d0557443" >
         <http:listener doc:name="Listener" doc:id="3c16062e-aa9e-46cb-ad1b-ee8754c45681" config-ref="HTTP_Listener_config" path="/test"/>
@@ -17,5 +17,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     <flow name="test-projectFlow1" doc:id="2c805c59-be9c-40ea-a64d-e25404e8cccc" >
         <http:listener doc:name="Listener" doc:id="19eceb25-8207-4e7d-b981-2a75c7f25139" config-ref="HTTP_Listener_config" path="/otherEndpoint"/>
         <logger level="INFO" doc:name="Logger" doc:id="15177c7f-c313-4bb2-b85f-167f49164c29" message="Otro endpoint!"/>
+        <http:request method="GET" doc:name="Request" doc:id="a4aa0c39-23e3-4924-926d-9f2d74a43594" url="https://httpbin.org/get"/>
     </flow>
+
 </mule>

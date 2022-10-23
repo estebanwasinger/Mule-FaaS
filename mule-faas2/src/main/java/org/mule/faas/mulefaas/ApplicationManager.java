@@ -3,13 +3,20 @@ package org.mule.faas.mulefaas;
 import org.example.ExecutionStatus;
 import org.example.Main;
 import org.example.xmlparser.MuleAppParser;
+import org.mule.faas.mulefaas.routing.GatewayRoutesRefresher;
 import org.mule.faas.mulefaas.routing.RefreshableRoutesLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.CachingRouteLocator;
+import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
+import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
 import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
+import reactor.core.publisher.Mono;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
@@ -30,6 +37,18 @@ public class ApplicationManager {
 
     @Autowired
     private RefreshableRoutesLocator locator;
+
+    @Autowired
+    protected RouteDefinitionWriter routeDefinitionWriter;
+
+    @Autowired
+    protected RouteLocator routeLocator;
+
+    @Autowired
+    private GatewayRoutesRefresher gatewayRoutesRefresher;
+
+    @Autowired
+    private RouteDefinitionRepository repository;
 
     public Map<String, App> apps = new HashMap<>();
     public Map<String, Process> runningApps = new HashMap<>();
@@ -83,7 +102,6 @@ public class ApplicationManager {
         }
 
         String url = String.format("http://0.0.0.0:8080/%s", appName);
-
         app.setUrl(url);
         app.setRunning(true);
         return new AppStartResponse(true, new AppStatus(appName, url), "ok");
@@ -91,14 +109,18 @@ public class ApplicationManager {
 
     @GetMapping("/apps/{appName}/stop")
     public boolean stopApp(@PathVariable String appName) {
-
         Process process = runningApps.get(appName);
         process.destroy();
         runningApps.remove(appName);
         App app = apps.get(appName);
         app.setRunning(false);
         app.setUrl(null);
+        removeRoute(appName);
         return true;
+    }
+
+    private void removeRoute(String appName) {
+        locator.deleteRoute(appName);
     }
 
     public ServerSocket create(int[] ports) throws IOException {

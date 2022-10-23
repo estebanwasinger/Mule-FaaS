@@ -1,8 +1,10 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.example.xmlparser.MuleAppParser;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,18 +21,14 @@ public class Main {
         System.out.println(msg + " " + (System.currentTimeMillis() - time));
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
         DwCodeGenerator dwCodeGenerator = new DwCodeGenerator();
-        HttpServer httpServer = new HttpServer("0.0.0.0", 8081);
-        httpServer
-                .withEndpoint("/")
-                .withAction(new LoggerAction("$"))
-                .withAction(new MapAction("{body : { root : { msg : 'hi!' } } }"))
-                .withAction(new LoggerAction("$ ++ { headers : { 'content-type' : 'application/xml'}}"));
+        MuleAppParser parser = new MuleAppParser();
+        String build = parser.generateMuleApp(new FileInputStream("/Users/estebanwasinger/Documents/Mule-FaaS/muledsl-to-dw/src/main/resources/http-logger.xml"), "0.0.0.0", "${http.port}");
 
-
-        String build = dwCodeGenerator.addComponent(httpServer).build();
         System.out.println(build);
+
+        build = build.replace("${http.port}", "8081");
 
         executeDwCode(build);
 

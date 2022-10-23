@@ -16,9 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * A gateway route resolver which is used for dynamically refresh routes during the application runtime.
@@ -99,6 +104,11 @@ public class RefreshableRoutesLocator implements RouteLocator {
      */
     public void buildRoutes() {
         this.route = routesBuilder.build().getRoutes();
+        gatewayRoutesRefresher.refreshRoutes();
+    }
+
+    public void deleteRoute(String id) {
+        clearRoutes();
         gatewayRoutesRefresher.refreshRoutes();
     }
 
