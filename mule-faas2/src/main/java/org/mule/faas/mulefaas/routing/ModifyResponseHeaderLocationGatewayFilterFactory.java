@@ -29,6 +29,7 @@ public class ModifyResponseHeaderLocationGatewayFilterFactory extends
         super(NameConfig.class);
     }
 
+
     @Override
     public List<String> shortcutFieldOrder() {
         return Arrays.asList(NAME_KEY);
@@ -36,14 +37,18 @@ public class ModifyResponseHeaderLocationGatewayFilterFactory extends
 
     @Override
     public GatewayFilter apply(NameConfig config) {
-        return (exchange, chain) -> chain.filter(exchange).then(Mono.fromRunnable(() -> {
-            HttpHeaders headers = exchange.getResponse().getHeaders();
-            final String locationUri = headers.getFirst(HttpHeaders.LOCATION);
-            if (locationUri != null) {
-                if (locationUri.isEmpty() || locationUri.equals("/")) {
-                    headers.set(HttpHeaders.LOCATION, config.getName());
+        return (exchange, chain) -> {
+            System.out.println("xxxxxxx - pre");
+            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                System.out.println("xxxxxxxxxxxxx - some-test");
+                HttpHeaders headers = exchange.getResponse().getHeaders();
+                final String locationUri = headers.getFirst(HttpHeaders.LOCATION);
+                if (locationUri != null) {
+                    if (locationUri.isEmpty() || locationUri.equals("/")) {
+                        headers.set(HttpHeaders.LOCATION, config.getName());
+                    }
                 }
-            }
-        }));
+            }));
+        };
     }
 }

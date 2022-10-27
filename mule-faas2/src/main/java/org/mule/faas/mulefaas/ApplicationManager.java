@@ -73,6 +73,8 @@ public class ApplicationManager {
         App app = apps.get(appName);
         String appCode;
 
+        System.out.println("Trying to start " + appName);
+
         int localPort = 0;
 
         if (app == null) {

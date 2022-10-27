@@ -8,6 +8,8 @@
 package org.mule.faas.mulefaas.routing;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.*;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -94,7 +97,10 @@ public class RefreshableRoutesLocator implements RouteLocator {
         //  the service may be aware of request header 'X-Forwarded-Prefix'
         filterSpec.addRequestHeader("X-Forwarded-Prefix", path);
         //  as a fallback for services not aware of 'X-Forwarded-Prefix' we correct the Location header in response
-        filterSpec.filter(new ModifyResponseHeaderLocationGatewayFilterFactory().apply(c -> c.setName(path + "/")));
+        filterSpec.filter(new ModifyResponseHeaderLocationGatewayFilterFactory().apply(c -> {
+            System.out.println("xxxxxxxxxxx - test");
+            c.setName(path + "/");
+        }));
 
         return filterSpec;
     }
