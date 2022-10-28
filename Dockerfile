@@ -6,7 +6,7 @@ RUN mv dw-1.0.24-Linux dw-1.0.24-Linux.zip
 
 RUN unzip dw-1.0.24-Linux.zip
 
-ENV PATH="${PATH}:/dw-1.0.25-Linux/bin"
+ENV PATH="${PATH}:/dw-1.0.24-Linux/bin"
 
 RUN wget https://github.com/estebanwasinger/Mule-FaaS/releases/download/0.0.4/mule-faas-0.0.4-SNAPSHOT.jar
 
