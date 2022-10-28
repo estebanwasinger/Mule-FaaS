@@ -41,7 +41,7 @@ public class MuleAppParser {
     public void parse() throws IOException, SAXException {
         InputStream input = new FileInputStream("/Users/estebanwasinger/IdeaProjects/muledsl-to-dw/src/main/resources/http-logger.xml");
         String build = generateMuleApp(input);
-        System.out.println(build);
+       // System.out.println(build);
 
         executeDwCode(build);
 
@@ -60,7 +60,7 @@ public class MuleAppParser {
             for (int i = 0; i < childNodes.getLength(); i++) {
                 Node item = childNodes.item(i);
                 String nodeName = item.getNodeName();
-                System.out.println(nodeName);
+               // System.out.println(nodeName);
                 Optional<MuleAppHandler> first = handlers.stream().filter(h -> h.handles(nodeName)).findFirst();
                 first.ifPresent(muleAppHandler -> muleAppHandler.handle(item, muleAppStructure));
             }
@@ -94,7 +94,7 @@ public class MuleAppParser {
             for (int i = 0; i < childNodes.getLength(); i++) {
                 Node item = childNodes.item(i);
                 String nodeName = item.getNodeName();
-                System.out.println(nodeName);
+                //System.out.println(nodeName);
                 Optional<MuleAppHandler> first = handlers.stream().filter(h -> h.handles(nodeName)).findFirst();
                 first.ifPresent(muleAppHandler -> muleAppHandler.handle(item, muleAppStructure));
             }

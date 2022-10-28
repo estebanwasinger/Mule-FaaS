@@ -11,7 +11,9 @@ public class MapAction implements DwAction {
 
     @Override
     public String toCode() {
+        value = value.replace("$(", "###");
         value = value.replace("$", inputParam);
+        value = value.replace("###", "$(");
         return value;
     }
 

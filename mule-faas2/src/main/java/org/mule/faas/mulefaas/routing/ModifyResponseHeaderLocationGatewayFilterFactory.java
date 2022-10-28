@@ -7,6 +7,7 @@
  */
 package org.mule.faas.mulefaas.routing;
 
+import org.mule.faas.mulefaas.ApplicationLifeCycleManager;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -25,10 +26,12 @@ import java.util.*;
 public class ModifyResponseHeaderLocationGatewayFilterFactory extends
         AbstractGatewayFilterFactory<AbstractGatewayFilterFactory.NameConfig> {
 
-    public ModifyResponseHeaderLocationGatewayFilterFactory() {
-        super(NameConfig.class);
-    }
+    private ApplicationLifeCycleManager applicationLifeCycleManager;
 
+    public ModifyResponseHeaderLocationGatewayFilterFactory(ApplicationLifeCycleManager applicationLifeCycleManager) {
+        super(NameConfig.class);
+        this.applicationLifeCycleManager = applicationLifeCycleManager;
+    }
 
     @Override
     public List<String> shortcutFieldOrder() {
@@ -38,9 +41,8 @@ public class ModifyResponseHeaderLocationGatewayFilterFactory extends
     @Override
     public GatewayFilter apply(NameConfig config) {
         return (exchange, chain) -> {
-            System.out.println("xxxxxxx - pre");
+            applicationLifeCycleManager.execute(config.getName());
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                System.out.println("xxxxxxxxxxxxx - some-test");
                 HttpHeaders headers = exchange.getResponse().getHeaders();
                 final String locationUri = headers.getFirst(HttpHeaders.LOCATION);
                 if (locationUri != null) {

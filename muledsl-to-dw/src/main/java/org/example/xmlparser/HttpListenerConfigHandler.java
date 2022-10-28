@@ -16,7 +16,7 @@ public class HttpListenerConfigHandler implements MuleAppHandler{
     @Override
     public void handle(Node item, MuleAppStructure muleAppStructure) {
         Map<String, String> values = new HashMap<>();
-        System.out.println(item);
+       // System.out.println(item);
         NodeList childNodes = item.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item1 = childNodes.item(i);

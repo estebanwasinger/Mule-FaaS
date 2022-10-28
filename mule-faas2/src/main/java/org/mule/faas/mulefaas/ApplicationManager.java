@@ -53,19 +53,31 @@ public class ApplicationManager {
     public Map<String, App> apps = new HashMap<>();
     public Map<String, Process> runningApps = new HashMap<>();
 
+    @Autowired
+    private ApplicationLifeCycleManager lifeCycleManager;
+
     @PostMapping("/apps")
-    public AppCreationResponse createApp(@RequestBody AppCreationRequest request) throws ParserConfigurationException, IOException, SAXException {
+    public AppCreationResponse createApp(@RequestBody AppCreationRequest request) throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
         MuleAppParser parser = new MuleAppParser();
         String muleApp = parser.generateMuleApp(new ByteArrayInputStream(request.getApp().getBytes()), "0.0.0.0", "${http.port}");
-        apps.put(request.getName(), new App(request.getName(), muleApp));
+        App value = new App(request.getName(), muleApp);
+        apps.put(request.getName(), value);
+        value.setPort(getAvailablePort());
+        lifeCycleManager.register(value);
         return new AppCreationResponse(true);
     }
 
     @GetMapping("/apps")
-    public List<App> appsList() {
+    public List<PublicApp> appsList() {
 //        CachingRouteLocator bean = (CachingRouteLocator) applicationContext.getBean(RouteLocator.class);
 //        applicationContext.bean
-        return new ArrayList<>(apps.values());
+        return apps.values().stream().map(app -> new PublicApp(app.getName(), app.getApp(), app.isRunning, app.getUrl())).collect(Collectors.toList());
+    }
+
+    @DeleteMapping("/apps/{appName}")
+    public void deleteApp(@PathVariable String appName) {
+        apps.remove(appName);
+        lifeCycleManager.deleteApp(appName);
     }
 
     @GetMapping("/apps/{appName}/start")
@@ -82,11 +94,7 @@ public class ApplicationManager {
         } else {
 
             if (!runningApps.containsKey(appName)) {
-                ServerSocket s = new ServerSocket(0);
-                s.close();
-                localPort = s.getLocalPort();
-
-                String replacement = String.valueOf(localPort);
+                String replacement = getAvailablePort();
                 appCode = app.getApp().replace("${http.port}", replacement);
 
                 ExecutionStatus executionStatus = Main.startDwCode(appCode);
@@ -107,6 +115,16 @@ public class ApplicationManager {
         app.setUrl(url);
         app.setRunning(true);
         return new AppStartResponse(true, new AppStatus(appName, url), "ok");
+    }
+
+    private String getAvailablePort() throws IOException {
+        int localPort;
+        ServerSocket s = new ServerSocket(0);
+        s.close();
+        localPort = s.getLocalPort();
+
+        String replacement = String.valueOf(localPort);
+        return replacement;
     }
 
     @GetMapping("/apps/{appName}/stop")

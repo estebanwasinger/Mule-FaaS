@@ -11,7 +11,9 @@ public class LoggerAction implements DwAction {
 
     @Override
     public String toCode() {
+        value = value.replace("$(", "###");
         value = value.replace("$", inputParam);
+        value = value.replace("###", "$(");
         return String.format("%s logAndReturn %s",value, inputParam);
     }
 

@@ -7,6 +7,7 @@
  */
 package org.mule.faas.mulefaas.routing;
 
+import org.mule.faas.mulefaas.ApplicationLifeCycleManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -39,16 +40,17 @@ public class RefreshableRoutesLocator implements RouteLocator {
 
     private final RouteLocatorBuilder builder;
     private final GatewayRoutesRefresher gatewayRoutesRefresher;
+    private ApplicationLifeCycleManager applicationLifeCycleManager;
 
     private RouteLocatorBuilder.Builder routesBuilder;
     private Flux<Route> route = Flux.empty();
+    private ApplicationLifeCycleManager lifeCycle;
 
     @Autowired
     public RefreshableRoutesLocator(@NonNull final RouteLocatorBuilder builder,
                                     @NonNull final GatewayRoutesRefresher gatewayRoutesRefresher) {
         this.builder = builder;
         this.gatewayRoutesRefresher = gatewayRoutesRefresher;
-
         clearRoutes();
     }
 
@@ -97,7 +99,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
         //  the service may be aware of request header 'X-Forwarded-Prefix'
         filterSpec.addRequestHeader("X-Forwarded-Prefix", path);
         //  as a fallback for services not aware of 'X-Forwarded-Prefix' we correct the Location header in response
-        filterSpec.filter(new ModifyResponseHeaderLocationGatewayFilterFactory().apply(c -> {
+        filterSpec.filter(new ModifyResponseHeaderLocationGatewayFilterFactory(lifeCycle).apply(c -> {
             System.out.println("xxxxxxxxxxx - test");
             c.setName(path + "/");
         }));
@@ -127,5 +129,13 @@ public class RefreshableRoutesLocator implements RouteLocator {
     @Override
     public Flux<Route> getRoutes() {
         return route;
+    }
+
+    public void setLifeCycle(ApplicationLifeCycleManager lifeCycle) {
+        this.lifeCycle = lifeCycle;
+    }
+
+    public ApplicationLifeCycleManager getLifeCycle() {
+        return lifeCycle;
     }
 }

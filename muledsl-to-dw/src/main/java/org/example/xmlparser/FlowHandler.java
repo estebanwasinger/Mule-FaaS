@@ -29,7 +29,7 @@ public class FlowHandler implements MuleAppHandler {
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item1 = childNodes.item(i);
             String nodeName = item1.getNodeName();
-            System.out.println(nodeName);
+            //System.out.println(nodeName);
             if(nodeName.equals("http:listener")) {
                 path = new HttpListenerHandler().getPath(item1);
             } else {
