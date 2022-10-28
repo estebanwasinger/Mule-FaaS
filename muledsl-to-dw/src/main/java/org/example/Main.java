@@ -54,8 +54,9 @@ public class Main {
     }
 
     public static ExecutionStatus startDwCode(String build) throws InterruptedException {
-        ProcessBuilder builder = new ProcessBuilder(
-                "/Users/ewasinger/.dw/bin/dw", "--eval", build);
+//        ProcessBuilder builder = new ProcessBuilder(
+//                "/Users/ewasinger/.dw/bin/dw", "--eval", build);
+        ProcessBuilder builder = new ProcessBuilder("dw", "--eval", build);
         AtomicReference<Process> processRef = new AtomicReference<>(null);
         AtomicReference<Exception> exceptionReference = new AtomicReference<>(null);
         CountDownLatch countDownLatch = new CountDownLatch(1);
