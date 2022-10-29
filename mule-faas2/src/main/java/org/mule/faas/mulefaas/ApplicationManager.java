@@ -78,6 +78,7 @@ public class ApplicationManager {
     public void deleteApp(@PathVariable String appName) {
         apps.remove(appName);
         lifeCycleManager.deleteApp(appName);
+        removeRoute(appName);
     }
 
     @GetMapping("/apps/{appName}/start")

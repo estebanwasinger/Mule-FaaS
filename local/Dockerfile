@@ -6,8 +6,6 @@ RUN mv dw-1.0.24-Linux dw-1.0.24-Linux.zip
 
 RUN unzip dw-1.0.24-Linux.zip
 
-ENV PATH="${PATH}:/dw-1.0.25-Linux/bin"
-
 ADD ./mule-faas2/target/mule-faas-0.0.1-SNAPSHOT.jar /
 
 ENV PORT=8080

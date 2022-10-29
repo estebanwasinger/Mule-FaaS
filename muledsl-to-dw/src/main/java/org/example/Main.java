@@ -36,7 +36,7 @@ public class Main {
 
     public static void executeDwCode(String build) throws IOException {
         ProcessBuilder builder = new ProcessBuilder(
-                "dw", "--eval", build);
+                "dw", "--version", build);
         builder.redirectErrorStream(true);
 //        printTime("Start process");
         Process p = builder.start();
@@ -57,6 +57,7 @@ public class Main {
 //        ProcessBuilder builder = new ProcessBuilder(
 //                "/Users/ewasinger/.dw/bin/dw", "--eval", build);
         ProcessBuilder builder = new ProcessBuilder("dw", "--eval", build);
+//        ProcessBuilder builder = new ProcessBuilder("echo", "$PATH");
         AtomicReference<Process> processRef = new AtomicReference<>(null);
         AtomicReference<Exception> exceptionReference = new AtomicReference<>(null);
         CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -66,6 +67,7 @@ public class Main {
                 builder.redirectErrorStream(true);
                 Process p = builder.start();
                 processRef.set(p);
+                Thread.sleep(500);
                 countDownLatch.countDown();
                 BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String line;

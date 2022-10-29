@@ -6,11 +6,8 @@ RUN mv dw-1.0.24-Linux dw-1.0.24-Linux.zip
 
 RUN unzip dw-1.0.24-Linux.zip
 
-ENV PATH="${PATH}:/dw-1.0.24-Linux/bin"
-
-RUN wget https://github.com/estebanwasinger/Mule-FaaS/releases/download/0.0.4/mule-faas-0.0.4-SNAPSHOT.jar
+RUN wget https://github.com/estebanwasinger/Mule-FaaS/releases/download/0.0.5/mule-faas-0.0.5-SNAPSHOT.jar
 
 ENV PORT=8081
-#ADD ./mule-faas2/target/mule-faas-0.0.1-SNAPSHOT.jar /
 
-CMD ["java", "-jar","-Dserver.port=${PORT}", "mule-faas-0.0.4-SNAPSHOT.jar"]
+CMD ["java", "-jar","-Dserver.port=${PORT}", "mule-faas-0.0.5-SNAPSHOT.jar"]
