@@ -71,7 +71,7 @@ public class ApplicationManager {
     public List<PublicApp> appsList() {
 //        CachingRouteLocator bean = (CachingRouteLocator) applicationContext.getBean(RouteLocator.class);
 //        applicationContext.bean
-        return apps.values().stream().map(app -> new PublicApp(app.getName(), app.getApp(), app.isRunning, app.getUrl())).collect(Collectors.toList());
+        return apps.values().stream().map(app -> new PublicApp(app.getName(), app.isRunning, app.getUrl())).collect(Collectors.toList());
     }
 
     @DeleteMapping("/apps/{appName}")
